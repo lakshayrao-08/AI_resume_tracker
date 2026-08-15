@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CareerZenith.ai - ATS Optimizer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col font-sans">
+
+    <header class="border-b border-slate-800 bg-slate-950/80 backdrop-blur sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="h-9 w-9 bg-indigo-600 rounded-lg flex items-center justify-center font-bold text-lg text-white shadow-lg shadow-indigo-500/30">
+                    CZ
+                </div>
+                <span class="font-bold text-xl tracking-tight bg-gradient-to-r from-white via-slate-200 to-indigo-400 bg-clip-text text-transparent">
+                    CareerZenith<span class="text-indigo-500">.ai</span>
+                </span>
+            </div>
+            <span class="text-xs font-medium px-3 py-1 bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 rounded-full flex items-center gap-1.5">
+                ⚡ 100% Local ATS Engine
+            </span>
+        </div>
+    </header>
+
+    <main class="flex-1 max-w-5xl w-full mx-auto px-6 py-10">
+        <div class="text-center max-w-2xl mx-auto mb-10">
+            <h1 class="text-3xl md:text-4xl font-extrabold tracking-tight mb-3">
+                Optimize Your Resume for <span class="text-indigo-400">ATS Algorithms</span>
+            </h1>
+            <p class="text-slate-400 text-sm md:text-base">
+                Upload your PDF resume and target Job Description to instantly calculate ATS match score and highlight missing key skills.
+            </p>
+        </div>
+
+        <div id="errorBox" class="hidden mb-6 p-4 bg-rose-500/10 border border-rose-500/30 rounded-xl text-rose-400 text-sm flex items-center gap-2">
+            ⚠️ <span id="errorText"></span>
+        </div>
+
+        <section id="formSection" class="bg-slate-800/50 border border-slate-700/60 rounded-2xl p-6 md:p-8 backdrop-blur shadow-2xl">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                <div>
+                    <label class="block text-sm font-semibold mb-2 text-slate-300">
+                        1. Upload Resume (PDF)
+                    </label>
+                    <div class="relative border-2 border-dashed border-slate-700 hover:border-indigo-500/60 transition-colors rounded-xl p-6 text-center bg-slate-900/40 flex flex-col items-center justify-center min-h-[220px]">
+                        <input type="file" id="fileInput" accept=".pdf" class="absolute inset-0 opacity-0 cursor-pointer w-full h-full" />
+                        <div id="uploadPlaceholder" class="flex flex-col items-center">
+                            <div class="text-4xl mb-2">📥</div>
+                            <p class="text-sm font-medium text-slate-300">
+                                Drag & drop or <span class="text-indigo-400">browse</span>
+                            </p>
+                            <p class="text-xs text-slate-500 mt-1">PDF format only</p>
+                        </div>
+                        <div id="fileSelectedInfo" class="hidden flex flex-col items-center">
+                            <div class="text-4xl mb-2">📄</div>
+                            <p id="fileName" class="text-sm font-medium text-slate-200 max-w-[200px] truncate"></p>
+                            <p id="fileSize" class="text-xs text-slate-500 mt-1"></p>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-semibold mb-2 text-slate-300">
+                        2. Target Job Description (JD)
+                    </label>
+                    <textarea id="jdInput" placeholder="Paste job description text here..." class="w-full h-[220px] bg-slate-900/40 border border-slate-700 rounded-xl p-4 text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-indigo-500 transition-colors resize-none"></textarea>
+                </div>
+            </div>
+
+            <button id="analyzeBtn" class="w-full py-4 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold rounded-xl shadow-lg shadow-indigo-600/30 flex items-center justify-center gap-2 transition-all disabled:opacity-50 disabled:cursor-not-allowed">
+                <span id="btnText">✨ Calculate Match Score & Extract Keywords</span>
+            </button>
+        </section>
+
+        <section id="resultsSection" class="hidden space-y-6">
+            <div class="bg-slate-800/50 border border-slate-700/60 rounded-2xl p-6 md:p-8 backdrop-blur flex flex-col md:flex-row items-center justify-between gap-6">
+                <div class="text-center md:text-left">
+                    <span class="text-xs uppercase tracking-wider font-bold text-indigo-400">Analysis Complete</span>
+                    <h2 class="text-2xl font-bold mt-1">ATS Optimization Summary</h2>
+                    <p class="text-slate-400 text-sm mt-1">Evaluated using TF-IDF Vectorization & Cosine Matching.</p>
+                </div>
+
+                <div class="flex items-center gap-4 bg-slate-900/60 border border-slate-700/50 p-4 rounded-xl">
+                    <div class="relative flex items-center justify-center w-20 h-20">
+                        <svg class="w-full h-full transform -rotate-90">
+                            <circle cx="40" cy="40" r="32" stroke="currentColor" stroke-width="6" class="text-slate-700" fill="transparent"/>
+                            <circle id="scoreCircle" cx="40" cy="40" r="32" stroke="currentColor" stroke-width="6" stroke-dasharray="201.06" stroke-dashoffset="201.06" class="text-indigo-500 transition-all duration-1000 ease-out" fill="transparent"/>
+                        </svg>
+                        <span id="scoreText" class="absolute font-bold text-lg">0%</span>
+                    </div>
+                    <div>
+                        <p class="text-xs text-slate-400">Overall ATS Score</p>
+                        <p id="scoreLabel" class="text-sm font-semibold text-slate-200 mt-0.5"></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="bg-slate-800/50 border border-slate-700/60 rounded-2xl p-6">
+                    <h3 id="matchedCount" class="font-semibold text-lg text-emerald-400 mb-4 flex items-center gap-2">✅ Matched Keywords</h3>
+                    <div id="matchedBox" class="flex flex-wrap gap-2"></div>
+                </div>
+
+                <div class="bg-slate-800/50 border border-slate-700/60 rounded-2xl p-6">
+                    <h3 id="missingCount" class="font-semibold text-lg text-rose-400 mb-4 flex items-center gap-2">⚠️ Missing Key Terms</h3>
+                    <div id="missingBox" class="flex flex-wrap gap-2"></div>
+                </div>
+            </div>
+
+            <div class="flex justify-end pt-2">
+                <button id="resetBtn" class="px-6 py-3 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 font-medium rounded-xl text-sm transition-colors">
+                    🔄 Analyze Another Resume
+                </button>
+            </div>
+        </section>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
